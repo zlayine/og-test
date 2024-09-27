@@ -247,7 +247,7 @@ const loadAsset = async () => {
   );
 };
 
-onMounted(() => {
+(() => {
   loadAsset();
-});
+})();
 </script>
