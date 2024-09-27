@@ -215,6 +215,13 @@ const generateHeadMeta = ({
   return metaTags;
 };
 
+useSeoMeta(
+  generateHeadMeta({
+    title: asset.value?.metadata.name,
+    image: asset.value?.metadata.media[0].url,
+  })
+);
+
 const loadAsset = async () => {
   const data = {
     query,
@@ -238,13 +245,6 @@ const loadAsset = async () => {
   );
 
   asset.value = (await response.json()).data.result;
-
-  useSeoMeta(
-    generateHeadMeta({
-      title: asset.value?.metadata.name,
-      image: asset.value?.metadata.media[0].url,
-    })
-  );
 };
 
 (() => {
