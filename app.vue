@@ -1,9 +1,9 @@
 <template>
   <div>
     <h1>Asset</h1>
-    <div v-if="isLoading">Loading...</div>
-    <div v-else-if="isError">Error loading asset</div>
-    <div v-else>{{ title }}</div>
+    <!-- <div v-if="isLoading">Loading...</div>
+    <div v-else-if="isError">Error loading asset</div> -->
+    <div>{{ title }}</div>
   </div>
 </template>
 
@@ -217,24 +217,24 @@ const generateHeadMeta = ({
   return metaTags;
 };
 
-// const payload = {
-//   query,
-//   variables: {
-//     id: "80297-6",
-//     tokenAccountAddress: "cxKnfok66R8BAuzGcypxqirYcqW7E9Spn4z5UZSVRuUHAcrTQ",
-//   },
-// };
+const payload = {
+  query,
+  variables: {
+    id: "80297-6",
+    tokenAccountAddress: "cxKnfok66R8BAuzGcypxqirYcqW7E9Spn4z5UZSVRuUHAcrTQ",
+  },
+};
 
-// const { data } = await useFetch(
-//   "https://canary-matrix-indexer.prod.enjops.com/graphql",
-//   {
-//     method: "POST",
-//     body: payload,
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   }
-// );
+const { data } = await useFetch(
+  "https://canary-matrix-indexer.prod.enjops.com/graphql",
+  {
+    method: "POST",
+    body: payload,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+);
 
 // const loadAsset = async () => {
 //   const payload = {
@@ -269,33 +269,32 @@ const generateHeadMeta = ({
 //   refetchOnWindowFocus: false,
 // });
 
-const { data, isLoading, isError, suspense } = useQuery({
-  queryKey: ["asset", { id: "80297-6" }],
-  queryFn: async () => {
-    const response = await fetch(
-      "https://canary-matrix-indexer.prod.enjops.com/graphql",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query,
-          variables: {
-            id: "80297-6",
-            tokenAccountAddress:
-              "cxKnfok66R8BAuzGcypxqirYcqW7E9Spn4z5UZSVRuUHAcrTQ",
-          },
-        }),
-      }
-    );
-    const json = await response.json();
-    return json.data.result;
-  },
-});
+// const { data, isLoading, isError, suspense } = useQuery({
+//   queryKey: ["asset", { id: "80297-6" }],
+//   queryFn: async () => {
+//     const response = await fetch(
+//       "https://canary-matrix-indexer.prod.enjops.com/graphql",
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           query,
+//           variables: {
+//             id: "80297-6",
+//             tokenAccountAddress:
+//               "cxKnfok66R8BAuzGcypxqirYcqW7E9Spn4z5UZSVRuUHAcrTQ",
+//           },
+//         }),
+//       }
+//     );
+//     const json = await response.json();
+//     return json.data.result;
+//   },
+// });
 
-const asset = computed(() => data.value);
-
+const asset = computed(() => data.value?.data.result);
 const title = computed(() => asset.value?.metadata?.name ?? "Asset name");
 const image = computed(
   () =>
@@ -303,9 +302,9 @@ const image = computed(
     "https://cdn.nft.io/images/branding/og-banner.jpg"
 );
 
-onServerPrefetch(async () => {
-  await suspense();
-});
+// onServerPrefetch(async () => {
+//   await suspense();
+// });
 
 useSeoMeta(
   generateHeadMeta({
