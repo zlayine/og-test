@@ -1,7 +1,9 @@
 <template>
   <div>
     <h1>Asset</h1>
-    {{ asset?.metadata.name }}
+    <h1>
+      {{ title }}
+    </h1>
   </div>
 </template>
 
@@ -177,8 +179,6 @@ query AssetQuery(
 }
 `;
 
-const asset: any = ref(null);
-
 const generateHeadMeta = ({
   title,
   description = "The most powerful NFTs in the world.",
@@ -215,39 +215,76 @@ const generateHeadMeta = ({
   return metaTags;
 };
 
+const payload = {
+  query,
+  variables: {
+    id: "80297-6",
+    tokenAccountAddress: "cxKnfok66R8BAuzGcypxqirYcqW7E9Spn4z5UZSVRuUHAcrTQ",
+  },
+};
+
+const { data } = await useFetch(
+  "https://canary-matrix-indexer.prod.enjops.com/graphql",
+  {
+    method: "POST",
+    body: payload,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+);
+
+const asset = computed(() => data.value?.data.result);
+
+const title = computed(() => asset.value?.metadata?.name ?? "Asset name");
+const image = computed(
+  () =>
+    asset.value?.metadata?.media[0].url ??
+    "https://cdn.nft.io/images/branding/og-banner.jpg"
+);
+
 useSeoMeta(
   generateHeadMeta({
-    title: asset.value?.metadata.name,
-    image: asset.value?.metadata.media[0].url,
+    title: title.value,
+    image: image.value,
   })
 );
 
-const loadAsset = async () => {
-  const data = {
-    query,
-    variables: {
-      id: "80297-6",
-      tokenAccountAddress: "cxKnfok66R8BAuzGcypxqirYcqW7E9Spn4z5UZSVRuUHAcrTQ",
-    },
-  };
+// const loadAsset = async () => {
+//   const data = {
+//     query,
+//     variables: {
+//       id: "80297-6",
+//       tokenAccountAddress: "cxKnfok66R8BAuzGcypxqirYcqW7E9Spn4z5UZSVRuUHAcrTQ",
+//     },
+//   };
 
-  const body = JSON.stringify(data);
+//   const body = JSON.stringify(data);
 
-  const response = await fetch(
-    "https://canary-matrix-indexer.prod.enjops.com/graphql",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    }
-  );
+//   const response = await fetch(
+//     "https://canary-matrix-indexer.prod.enjops.com/graphql",
+//     {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body,
+//     }
+//   );
 
-  asset.value = (await response.json()).data.result;
-};
+//   asset.value = (await response.json()).data.result;
+// };
 
-(() => {
-  loadAsset();
-})();
+// const loadAsset = async () => {
+//   if (error.value) {
+//     console.error(error.value);
+//     return;
+//   }
+
+//   return asset.value?.data?.result;
+// };
+
+// (() => {
+//   loadAsset();
+// })();
 </script>
